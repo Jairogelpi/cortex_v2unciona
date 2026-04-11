@@ -8,6 +8,12 @@ Si δ < 0.65 → bloquea. Si δ ≥ 0.65 → aprueba.
 ## Instalación
 
 ```bash
+pip install -e .
+```
+
+Si después lo publicamos en PyPI, también servirá:
+
+```bash
 pip install cortex-ai
 ```
 

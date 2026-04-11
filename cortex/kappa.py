@@ -2,7 +2,7 @@ import json
 from langchain_ollama import ChatOllama
 from ddgs import DDGS
 
-model = ChatOllama(model="qwen3:8b", temperature=0, num_predict=512)
+model = ChatOllama(model="qwen3:8b", temperature=0, num_predict=512, format="json")
 
 def buscar_evidencia(query: str) -> str:
     """Busca evidencia real para verificar una respuesta."""
