@@ -34,6 +34,20 @@ resultado = kappa.wrap(mi_agente, "¿cuándo es el próximo Red Bull Batalla?")
 # δ 0.40 → BACKTRACK. El agente no actúa.
 ```
 
+## Demos
+
+Desde la raíz del repositorio:
+
+```bash
+python examples/demo1_noticias.py
+python examples/demo2_medicina.py
+python examples/demo3_codigo.py
+```
+
+- `demo1_noticias.py`: noticias y eventos recientes.
+- `demo2_medicina.py`: consultas médicas de riesgo y control anatómico estable.
+- `demo3_codigo.py`: recomendaciones de código y bloqueo de APIs deprecadas.
+
 ## El problema que resuelve
 
 Hoy los agentes responden siempre con la misma confianza.
