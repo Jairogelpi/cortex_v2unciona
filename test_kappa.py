@@ -1,11 +1,9 @@
 import sys
 sys.path.append(".")
 
-from langchain_ollama import ChatOllama
-from ddgs import DDGS
 from cortex import kappa  # importamos el módulo
 
-model = ChatOllama(model="qwen3:8b", temperature=0, num_predict=512)
+model = kappa.crear_modelo("agente")
 
 # Agente simple — el que vamos a proteger con Κ
 def mi_agente(pregunta: str) -> str:

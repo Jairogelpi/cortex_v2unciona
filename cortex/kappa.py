@@ -1,8 +1,71 @@
 import json
-from langchain_ollama import ChatOllama
+import os
+from functools import lru_cache
+from typing import Literal
+
 from ddgs import DDGS
 
-model = ChatOllama(model="qwen3:8b", temperature=0, num_predict=512, format="json")
+
+@lru_cache(maxsize=None)
+def crear_modelo(uso: Literal["agente", "critico"] = "critico"):
+    proveedor = os.getenv("CORTEX_PROVIDER", "auto").strip().lower()
+    openrouter_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+
+    if proveedor == "openrouter" or (proveedor == "auto" and openrouter_key):
+        from langchain_openai import ChatOpenAI
+
+        model_name = os.getenv(
+            "CORTEX_OPENROUTER_MODEL",
+            "openai/gpt-4o-mini" if uso == "agente" else "openai/gpt-4o-mini",
+        )
+        return ChatOpenAI(
+            model=model_name,
+            temperature=0,
+            api_key=openrouter_key,
+            base_url="https://openrouter.ai/api/v1",
+            default_headers={
+                "HTTP-Referer": os.getenv(
+                    "OPENROUTER_HTTP_REFERER",
+                    "https://github.com/Jairogelpi/cortex_v2unciona",
+                ),
+                "X-Title": os.getenv("OPENROUTER_TITLE", "cortex-ai"),
+            },
+        )
+
+    from langchain_ollama import ChatOllama
+
+    model_name = os.getenv(
+        "CORTEX_OLLAMA_MODEL",
+        "qwen3:8b",
+    )
+    ollama_kwargs = {
+        "model": model_name,
+        "temperature": 0,
+    }
+    if uso == "critico":
+        ollama_kwargs["num_predict"] = int(os.getenv("CORTEX_NUM_PREDICT", "512"))
+        ollama_kwargs["format"] = "json"
+
+    return ChatOllama(**ollama_kwargs)
+
+
+model = crear_modelo("critico")
+
+
+def es_consulta_medica(pregunta: str) -> bool:
+    texto = pregunta.lower()
+    palabras_clave = (
+        "ibuprofeno",
+        "paracetamol",
+        "alcohol",
+        "dosis",
+        "medic",
+        "médic",
+        "niño",
+        "niña",
+        "ml",
+    )
+    return any(palabra in texto for palabra in palabras_clave)
 
 def buscar_evidencia(query: str) -> str:
     """Busca evidencia real para verificar una respuesta."""
@@ -27,8 +90,20 @@ def evaluar(pregunta: str, respuesta: str, verificar_web: bool = True) -> dict:
     evidencia = ""
     if verificar_web:
         evidencia = buscar_evidencia(pregunta)
+
+    contexto_medico = ""
+    if es_consulta_medica(pregunta):
+        contexto_medico = """
+CONTEXTO MÉDICO DE ALTO RIESGO:
+- Trata esta pregunta con máxima cautela.
+- Una respuesta sólo debe aprobarse si la evidencia externa confirma explícitamente la pauta.
+- Si la respuesta da una dosis concreta, una conversión a mL, o minimiza una interacción entre medicamento y alcohol, usa BACKTRACK salvo verificación inequívoca.
+- En dudas de dosificación pediátrica o combinaciones con alcohol, prioriza seguridad sobre completitud.
+"""
     
     prompt = f"""Evalúa si esta respuesta es correcta y confiable.
+
+{contexto_medico if contexto_medico else ""}
 
 PREGUNTA: {pregunta}
 RESPUESTA DEL AGENTE: {respuesta}

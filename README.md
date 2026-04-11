@@ -17,6 +17,11 @@ Si después lo publicamos en PyPI, también servirá:
 pip install cortex-ai
 ```
 
+## Velocidad
+
+Si defines `OPENROUTER_API_KEY`, Cortex usa OpenRouter automáticamente y deja Ollama como fallback.
+Por defecto usa `openai/gpt-4o-mini`, y puedes cambiarlo con `CORTEX_OPENROUTER_MODEL`.
+
 ## Uso
 
 ```python
@@ -52,6 +57,7 @@ Ningún framework resuelve esto de forma nativa, local y agnóstica.
 
 - Python 3.10+
 - Ollama corriendo localmente (ollama.ai)
+- O OpenRouter con `OPENROUTER_API_KEY`
 - Modelo recomendado: qwen3:8b
 
 ## Fundamento
