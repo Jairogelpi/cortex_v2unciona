@@ -48,6 +48,14 @@ python examples/demo3_codigo.py
 - `demo2_medicina.py`: consultas médicas de riesgo y control anatómico estable.
 - `demo3_codigo.py`: recomendaciones de código y bloqueo de APIs deprecadas.
 
+### Resumen rápido
+
+| Demo | Bloquea | Aprueba |
+| --- | --- | --- |
+| `demo1_noticias.py` | Clásico Real Madrid vs Barcelona; España en 2026 | Mbappé; control de países de la UE |
+| `demo2_medicina.py` | Ibuprofeno sin concentración; paracetamol + alcohol | Huesos del cuerpo humano adulto |
+| `demo3_codigo.py` | `LangChain .get()` deprecado | `predict()` de scikit-learn; `fetch` moderno |
+
 ## El problema que resuelve
 
 Hoy los agentes responden siempre con la misma confianza.
